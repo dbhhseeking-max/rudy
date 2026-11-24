@@ -1,0 +1,1288 @@
+/* ==========================================================================
+   1. BASE & EDITORIAL TYPOGRAPHY TOKENS
+   ========================================================================== */
+:root {
+  --bg-obsidian: #0c0d0f;
+  --bg-panel: #131518;
+  --border-subtle: rgba(255, 255, 255, 0.1);
+  --gold-accent: #e4d4a7;
+  --text-primary: #f3f1ec;
+  --text-muted: #9ca3af;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--bg-obsidian);
+  color: var(--text-primary);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  overflow-x: hidden;
+  min-height: 100vh;
+  /* Subtle tactile dark paper grain via radial gradient */
+  background-image:
+    radial-gradient(circle at 20% 15%, rgba(228, 212, 167, 0.04) 0%, transparent 45%),
+    radial-gradient(circle at 80% 85%, rgba(56, 97, 140, 0.05) 0%, transparent 50%);
+}
+
+.font-serif-editorial {
+  font-family: 'Newsreader', Georgia, serif;
+}
+
+.font-mono-code {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* ==========================================================================
+   2. STRIPE PRESS 3D BOOKSHELF ARCHITECTURE (GPU HARDWARE ACCELERATED)
+   ========================================================================== */
+.bookshelf-perspective {
+  perspective: 1800px;
+  perspective-origin: 50% 45%;
+}
+
+.book-slot {
+  position: relative;
+  height: 390px;
+  width: 68px;
+  flex-shrink: 0;
+  cursor: pointer;
+  transform-style: preserve-3d;
+  transition: width 0.72s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Subtle lift on hover when book is closed */
+.book-slot:not(.is-open):hover {
+  transform: translateY(-10px);
+}
+
+/* Expanded width when the book rotates open */
+.book-slot.is-open {
+  width: 286px;
+  transform: translateY(-8px) scale(1.03);
+  cursor: default;
+}
+
+/* Left 3D Spine Face */
+.book-spine {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 68px;
+  height: 100%;
+  border-radius: 3px 2px 2px 3px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 8px;
+  transform-origin: left center;
+  transition: all 0.72s cubic-bezier(0.22, 1, 0.36, 1);
+  background-image: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.22) 0%,
+    rgba(255, 255, 255, 0.06) 14%,
+    rgba(0, 0, 0, 0.04) 55%,
+    rgba(0, 0, 0, 0.28) 92%,
+    rgba(0, 0, 0, 0.48) 100%
+  );
+  box-shadow:
+    inset 2px 0 3px rgba(255, 255, 255, 0.18),
+    inset -2px 0 4px rgba(0, 0, 0, 0.35),
+    4px 12px 24px rgba(0, 0, 0, 0.55);
+  z-index: 2;
+  overflow: hidden;
+}
+
+/* When open, spine narrows into the realistic curved binding edge */
+.book-slot.is-open .book-spine {
+  width: 24px;
+  padding: 20px 2px;
+  transform: rotateY(-28deg);
+  filter: brightness(0.86);
+}
+
+.book-slot.is-open .spine-content {
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.spine-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  transition: opacity 0.35s ease 0.2s;
+}
+
+.vertical-title {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  letter-spacing: 0.04em;
+}
+
+/* Front Cover Face (Rotates out from behind the spine) */
+.book-cover {
+  position: absolute;
+  top: 0;
+  left: 66px;
+  width: 264px;
+  height: 100%;
+  border-radius: 2px 6px 6px 2px;
+  transform-origin: left center;
+  transform: rotateY(86deg);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 0.72s cubic-bezier(0.22, 1, 0.36, 1),
+              left 0.72s cubic-bezier(0.22, 1, 0.36, 1),
+              opacity 0.45s ease;
+  background-image: linear-gradient(
+    90deg,
+    rgba(0, 0, 0, 0.32) 0%,
+    rgba(255, 255, 255, 0.14) 3.5%,
+    rgba(0, 0, 0, 0.08) 6%,
+    rgba(255, 255, 255, 0.04) 45%,
+    rgba(0, 0, 0, 0.14) 100%
+  );
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.25),
+    12px 18px 36px rgba(0, 0, 0, 0.65);
+  padding: 24px 22px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  z-index: 3;
+  overflow: hidden;
+}
+
+/* Open state: Front cover swings smoothly to face the reader */
+.book-slot.is-open .book-cover {
+  left: 22px;
+  transform: rotateY(0deg);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Subtle page-edge stack effect on the right edge of open cover */
+.book-cover::after {
+  content: '';
+  position: absolute;
+  top: 4px;
+  right: 0;
+  width: 4px;
+  height: calc(100% - 8px);
+  background: repeating-linear-gradient(
+    90deg,
+    rgba(245, 240, 230, 0.55) 0px,
+    rgba(245, 240, 230, 0.55) 1px,
+    rgba(180, 170, 155, 0.35) 1px,
+    rgba(180, 170, 155, 0.35) 2px
+  );
+  border-radius: 0 3px 3px 0;
+}
+
+/* Individual Book Color Themes */
+.theme-profile {
+  background-color: #8b9078; /* R - Sage Olive Parchment */
+  color: #f6f1e3;
+}
+.theme-work {
+  background-color: #215273; /* U - Deep Cobalt Press */
+  color: #f4efe6;
+}
+.theme-moment {
+  background-color: #e2c458; /* D - Warm Mustard Gold */
+  color: #1c1b18;
+}
+.theme-art {
+  background-color: #522437; /* Y - Deep Burgundy Plum */
+  color: #f6e7d8;
+}
+
+/* ==========================================================================
+   3. FLOATING BUTTERFLY 3D INDEPENDENT WING HINGES & SPEECH BUBBLE
+   ========================================================================== */
+#butterfly-actor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 50px;
+  height: 50px;
+  z-index: 60;
+  pointer-events: none;
+  will-change: transform, opacity;
+  opacity: 0;
+  filter: drop-shadow(0 8px 14px rgba(0, 0, 0, 0.65));
+}
+
+#butterfly-actor.can-close {
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+/* Speech bubble above butterfly's head */
+#butterfly-bubble {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%) translateY(4px) scale(0.92);
+  background: rgba(24, 22, 18, 0.94);
+  border: 1px solid rgba(228, 212, 167, 0.55);
+  color: #e4d4a7;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  white-space: nowrap;
+  padding: 4px 10px;
+  border-radius: 999px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.55);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+#butterfly-bubble::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 5px;
+  border-style: solid;
+  border-color: rgba(228, 212, 167, 0.55) transparent transparent transparent;
+}
+
+#butterfly-bubble.is-visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0) scale(1);
+  pointer-events: auto;
+}
+
+.butterfly-3d-stage {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  perspective: 420px;
+  transform-style: preserve-3d;
+}
+
+.butterfly-wing-pane {
+  position: absolute;
+  top: 0;
+  width: 50%;
+  height: 100%;
+  transform-style: preserve-3d;
+  backface-visibility: visible;
+  will-change: transform;
+}
+
+.wing-left {
+  left: 0;
+  transform-origin: 100% 50%;
+  animation: flapLeft 0.24s ease-in-out infinite alternate;
+}
+
+.wing-right {
+  left: 50%;
+  transform-origin: 0% 50%;
+  animation: flapRight 0.24s ease-in-out infinite alternate;
+}
+
+.butterfly-body-pane {
+  position: absolute;
+  inset: 0;
+  transform: translateZ(1px);
+  pointer-events: none;
+}
+
+/* Gentle resting breathe once butterfly lands (wings fold upward cleanly without clipping) */
+#butterfly-actor.is-perched .wing-left {
+  animation: restLeft 1.9s ease-in-out infinite alternate;
+}
+
+#butterfly-actor.is-perched .wing-right {
+  animation: restRight 1.9s ease-in-out infinite alternate;
+}
+
+@keyframes flapLeft {
+  0% { transform: rotateY(14deg); }
+  100% { transform: rotateY(66deg); }
+}
+
+@keyframes flapRight {
+  0% { transform: rotateY(-14deg); }
+  100% { transform: rotateY(-66deg); }
+}
+
+@keyframes restLeft {
+  0% { transform: rotateY(26deg); }
+  100% { transform: rotateY(56deg); }
+}
+
+@keyframes restRight {
+  0% { transform: rotateY(-26deg); }
+  100% { transform: rotateY(-56deg); }
+}
+
+/* ==========================================================================
+   3.5. ART VINYL ARCHIVE, TOP DYNAMIC CAPSULE & PHYSICAL EXTRACTION PHYSICS
+   ========================================================================== */
+@keyframes vinylSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.vinyl-disc {
+  position: relative;
+  border-radius: 9999px;
+  background:
+    radial-gradient(circle at 50% 50%,
+      #161416 0%, #161416 28%,
+      #0c0b0d 30%, #1a181c 35%,
+      #0b0a0c 41%, #19171b 47%,
+      #0b0a0c 54%, #1a181c 61%,
+      #0c0b0d 69%, #19171b 77%,
+      #0b0a0c 85%, #231f24 96%, #09080a 100%);
+  box-shadow:
+    0 8px 22px rgba(0, 0, 0, 0.72),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+  animation: vinylSpin 10s linear infinite;
+  animation-play-state: paused;
+}
+
+.vinyl-disc.is-spinning {
+  animation-play-state: running;
+}
+
+.vinyl-disc::after {
+  content: '';
+  position: absolute;
+  inset: 1px;
+  border-radius: 9999px;
+  background: conic-gradient(
+    from 215deg,
+    transparent 0deg,
+    rgba(228, 212, 167, 0.16) 24deg,
+    transparent 52deg,
+    transparent 180deg,
+    rgba(240, 168, 195, 0.13) 206deg,
+    transparent 236deg
+  );
+  pointer-events: none;
+}
+
+.vinyl-tonearm {
+  transform-origin: 78% 16%;
+  transform: rotate(-28deg);
+  transition: transform 0.75s cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+}
+
+.vinyl-tonearm.is-playing {
+  transform: rotate(3deg);
+}
+
+/* Record Sleeve & Physical Disc Slide-Out States */
+.vinyl-card .peek-disc {
+  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.22s ease;
+}
+.vinyl-card:hover .peek-disc {
+  transform: translateX(16px);
+}
+.vinyl-card.is-pulling .peek-disc {
+  transform: translateX(48px) rotate(24deg);
+}
+.vinyl-card.is-in-player .peek-disc {
+  opacity: 0;
+  transform: translateX(46px) scale(0.86);
+  pointer-events: none;
+}
+
+/* GPU-only Flying Vinyl Actor */
+#flying-vinyl-actor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 80;
+  pointer-events: none;
+  opacity: 0;
+  transform: translate3d(-200px, -200px, 0);
+  filter: drop-shadow(0 14px 24px rgba(0, 0, 0, 0.85));
+}
+
+/* Subtle gold impact ripple when extracted vinyl docks into the top capsule */
+@keyframes dockReceiveGlow {
+  0% { box-shadow: 0 0 0 0 rgba(228, 212, 167, 0.7), 0 12px 32px rgba(0, 0, 0, 0.76); }
+  55% { box-shadow: 0 0 0 9px rgba(228, 212, 167, 0), 0 14px 36px rgba(228, 212, 167, 0.24); }
+  100% { box-shadow: 0 0 0 0 rgba(228, 212, 167, 0), 0 12px 32px rgba(0, 0, 0, 0.76); }
+}
+.dock-receive-pulse {
+  animation: dockReceiveGlow 0.68s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Sticky Top Capsule (Zero scroll JS overhead, never overlaps header or page content) */
+#top-vinyl-dock {
+  position: sticky;
+  top: 10px;
+  z-index: 45;
+  transition: opacity 0.3s ease, transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Lightweight Equalizer Bars for active record indicator */
+@keyframes eqPulse {
+  0%, 100% { transform: scaleY(0.28); }
+  50% { transform: scaleY(1); }
+}
+.eq-bar {
+  width: 2px;
+  height: 10px;
+  background: #e4d4a7;
+  border-radius: 999px;
+  transform-origin: bottom;
+  animation: eqPulse 0.9s ease-in-out infinite;
+}
+.eq-bar:nth-child(2) { animation-delay: 0.25s; animation-duration: 0.72s; }
+.eq-bar:nth-child(3) { animation-delay: 0.5s; animation-duration: 1.05s; }
+
+/* Ultra-Thin Hairline Scrubbers */
+.hairline-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+}
+.hairline-slider::-webkit-slider-runnable-track {
+  height: 3px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+}
+.hairline-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 10px;
+  height: 10px;
+  margin-top: -3.5px;
+  border-radius: 9999px;
+  background: #e4d4a7;
+  border: 2px solid #0f1013;
+  box-shadow: 0 0 8px rgba(228, 212, 167, 0.55);
+}
+.hairline-slider::-moz-range-thumb {
+  width: 10px;
+  height: 10px;
+  border-radius: 9999px;
+  background: #e4d4a7;
+  border: 2px solid #0f1013;
+}
+
+/* Turntable Sheet & Correspondence Modal Transitions */
+.sheet-backdrop { transition: opacity 0.28s ease; }
+.sheet-panel { transition: transform 0.36s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.26s ease; }
+
+/* ==========================================================================
+   3.6. PROFILE CONSTELLATION GRAPH (GLOWING FOCUS NODES AROUND AVATAR)
+   ========================================================================== */
+@keyframes profileNodeBreath {
+  0%, 100% {
+    box-shadow: 0 0 10px rgba(228, 212, 167, 0.16), inset 0 0 8px rgba(228, 212, 167, 0.06);
+    border-color: rgba(228, 212, 167, 0.3);
+    transform: translateY(0px);
+  }
+  50% {
+    box-shadow: 0 0 22px rgba(228, 212, 167, 0.38), inset 0 0 12px rgba(228, 212, 167, 0.12);
+    border-color: rgba(228, 212, 167, 0.62);
+    transform: translateY(-2.5px);
+  }
+}
+
+@keyframes profileDotPulse {
+  0%, 100% {
+    box-shadow: 0 0 6px rgba(228, 212, 167, 0.75);
+    opacity: 0.78;
+  }
+  50% {
+    box-shadow: 0 0 14px rgba(228, 212, 167, 1);
+    opacity: 1;
+  }
+}
+
+.profile-focus-node {
+  animation: profileNodeBreath 4.4s ease-in-out infinite;
+  will-change: transform, box-shadow;
+}
+
+.profile-focus-dot {
+  animation: profileDotPulse 3.2s ease-in-out infinite;
+}
+
+/* ==========================================================================
+   4. EDITORIAL FOLIO READER TRANSITIONS & CUSTOM SCROLLBAR
+   ========================================================================== */
+.folio-fade-in {
+  animation: folioReveal 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes folioReveal {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.stage-transition {
+  transition: opacity 0.42s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.42s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.02);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(228, 212, 167, 0.22);
+  border-radius: 999px;
+}
+
+@media (max-width: 640px) {
+  .book-slot {
+    height: 330px;
+    width: 56px;
+  }
+  .book-slot.is-open {
+    width: 236px;
+  }
+  .book-spine {
+    width: 56px;
+    padding: 14px 4px;
+  }
+  .book-cover {
+    left: 54px;
+    width: 216px;
+    padding: 18px 16px;
+  }
+  .book-slot.is-open .book-cover {
+    left: 20px;
+  }
+}
+
+/* ==========================================================================
+   5. WORK & STUDY — OBSIDIAN MARKDOWN WORKSPACE & BUTTERFLY GRAPH VIEW
+   ========================================================================== */
+.ws-obsidian-shell {
+  display: flex;
+  height: 680px;
+  min-height: 540px;
+  max-height: calc(100vh - 210px);
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: #14161a;
+  overflow: hidden;
+  box-shadow: 0 22px 54px rgba(0, 0, 0, 0.58);
+  position: relative;
+}
+
+.ws-ribbon {
+  width: 44px;
+  flex-shrink: 0;
+  background: #0f1115;
+  border-right: 1px solid rgba(255, 255, 255, 0.07);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px 0;
+  gap: 6px;
+}
+
+.ws-ribbon-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(243, 241, 236, 0.48);
+  transition: all 0.18s ease;
+  cursor: pointer;
+  position: relative;
+}
+
+.ws-ribbon-btn:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: #f3f1ec;
+}
+
+.ws-ribbon-btn.is-active {
+  background: rgba(228, 212, 167, 0.14);
+  color: #e4d4a7;
+}
+
+.ws-ribbon-btn.ws-graph-trigger {
+  color: #e4d4a7;
+  background: rgba(228, 212, 167, 0.08);
+  border: 1px solid rgba(228, 212, 167, 0.25);
+}
+
+.ws-ribbon-btn.ws-graph-trigger:hover {
+  background: rgba(228, 212, 167, 0.2);
+  box-shadow: 0 0 16px rgba(228, 212, 167, 0.25);
+  transform: scale(1.06);
+}
+
+.ws-sidebar {
+  width: 248px;
+  flex-shrink: 0;
+  background: #111317;
+  border-right: 1px solid rgba(255, 255, 255, 0.07);
+  display: flex;
+  flex-direction: column;
+  transition: width 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+              opacity 0.22s ease,
+              border-color 0.22s ease;
+  overflow: hidden;
+  will-change: width, opacity;
+}
+
+.ws-sidebar-inner {
+  width: 248px;
+  min-width: 248px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.ws-sidebar.is-collapsed {
+  width: 0;
+  border-right-color: transparent;
+  border-right-width: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.ws-sidebar-tabs {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 10px 6px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.ws-sidebar-tab {
+  flex: 1;
+  height: 30px;
+  border-radius: 7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  color: rgba(243, 241, 236, 0.45);
+  font-size: 11px;
+  transition: all 0.16s ease;
+  cursor: pointer;
+  position: relative;
+}
+
+.ws-sidebar-tab:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(243, 241, 236, 0.85);
+}
+
+.ws-sidebar-tab.is-active {
+  color: #e4d4a7;
+  background: rgba(228, 212, 167, 0.1);
+}
+
+.ws-sidebar-tab.is-active::after {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  left: 20%;
+  right: 20%;
+  height: 2px;
+  border-radius: 99px;
+  background: #e4d4a7;
+}
+
+.ws-tree-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 8px;
+  border-radius: 7px;
+  font-size: 13px;
+  color: rgba(243, 241, 236, 0.72);
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.14s ease, color 0.14s ease;
+  position: relative;
+}
+
+.ws-tree-item:hover {
+  background: rgba(255, 255, 255, 0.055);
+  color: #f3f1ec;
+}
+
+.ws-tree-item.is-active {
+  background: rgba(228, 212, 167, 0.13);
+  color: #f5ebd0;
+}
+
+.ws-tree-item.is-drag-over {
+  background: rgba(86, 156, 214, 0.2);
+  outline: 1px dashed rgba(124, 196, 250, 0.7);
+}
+
+.ws-tree-item .ws-item-menu-btn {
+  opacity: 0;
+  transition: opacity 0.14s ease;
+}
+
+.ws-tree-item:hover .ws-item-menu-btn,
+.ws-tree-item.is-active .ws-item-menu-btn {
+  opacity: 1;
+}
+
+.ws-editor-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  background: #17191e;
+}
+
+.ws-tab-strip {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 8px 0;
+  background: #101216;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.ws-tab-strip::-webkit-scrollbar {
+  display: none;
+}
+
+.ws-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 190px;
+  padding: 6px 10px 7px;
+  border-radius: 8px 8px 0 0;
+  font-size: 12px;
+  color: rgba(243, 241, 236, 0.52);
+  background: transparent;
+  border: 1px solid transparent;
+  border-bottom: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+
+.ws-tab:hover {
+  color: rgba(243, 241, 236, 0.85);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.ws-tab.is-active {
+  color: #f3f1ec;
+  background: #17191e;
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+/* Markdown Preview Typography (Obsidian-inspired) */
+.ws-md-preview {
+  color: rgba(243, 241, 236, 0.88);
+  font-size: 15px;
+  line-height: 1.78;
+  word-break: break-word;
+}
+
+.ws-md-preview h1 {
+  font-family: 'Newsreader', Georgia, serif;
+  font-size: 1.85rem;
+  font-weight: 500;
+  color: #f6f1e3;
+  margin: 1.2em 0 0.5em;
+  padding-bottom: 0.25em;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+.ws-md-preview h2 {
+  font-family: 'Newsreader', Georgia, serif;
+  font-size: 1.45rem;
+  font-weight: 500;
+  color: #f3ebd7;
+  margin: 1.15em 0 0.45em;
+}
+.ws-md-preview h3 {
+  font-size: 1.12rem;
+  font-weight: 600;
+  color: #e4d4a7;
+  margin: 1em 0 0.4em;
+}
+.ws-md-preview h4 {
+  font-size: 0.98rem;
+  font-weight: 600;
+  color: #7cc4fa;
+  margin: 0.9em 0 0.3em;
+}
+.ws-md-preview p {
+  margin: 0.65em 0;
+}
+.ws-md-preview ul, .ws-md-preview ol {
+  margin: 0.65em 0;
+  padding-left: 1.45em;
+}
+.ws-md-preview ul { list-style-type: disc; }
+.ws-md-preview ol { list-style-type: decimal; }
+.ws-md-preview li { margin: 0.25em 0; }
+.ws-md-preview blockquote {
+  border-left: 3px solid #e4d4a7;
+  background: rgba(228, 212, 167, 0.05);
+  padding: 0.6em 1em;
+  margin: 0.9em 0;
+  border-radius: 0 8px 8px 0;
+  color: rgba(243, 241, 236, 0.78);
+  font-style: italic;
+}
+.ws-md-preview code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.84em;
+  background: rgba(255, 255, 255, 0.07);
+  color: #f2d59b;
+  padding: 2px 6px;
+  border-radius: 5px;
+}
+.ws-md-preview pre {
+  background: #0d0f13;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 10px;
+  padding: 14px 16px;
+  overflow-x: auto;
+  margin: 0.9em 0;
+}
+.ws-md-preview pre code {
+  background: transparent;
+  padding: 0;
+  color: #dce3ec;
+  font-size: 0.83em;
+  line-height: 1.6;
+}
+.ws-md-preview hr {
+  border: none;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.1);
+  margin: 1.4em 0;
+}
+.ws-md-preview mark {
+  background: rgba(228, 212, 167, 0.24);
+  color: #fff6dc;
+  padding: 1px 4px;
+  border-radius: 4px;
+}
+.ws-md-preview table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1em 0;
+  font-size: 0.9em;
+}
+.ws-md-preview th, .ws-md-preview td {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 7px 11px;
+  text-align: left;
+}
+.ws-md-preview th {
+  background: rgba(255, 255, 255, 0.04);
+  color: #e4d4a7;
+}
+.ws-md-preview a.ws-ext-link {
+  color: #7cc4fa;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.ws-md-preview .ws-wikilink {
+  display: inline;
+  color: #e4d4a7;
+  background: rgba(228, 212, 167, 0.1);
+  border-bottom: 1px solid rgba(228, 212, 167, 0.55);
+  padding: 1px 5px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.ws-md-preview .ws-wikilink:hover {
+  background: rgba(228, 212, 167, 0.22);
+  color: #fff8e6;
+}
+.ws-md-preview .ws-wikilink.is-unresolved {
+  color: rgba(228, 212, 167, 0.55);
+  border-bottom-style: dashed;
+  background: rgba(255, 255, 255, 0.03);
+}
+.ws-md-preview .ws-tag-pill {
+  display: inline-block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.78em;
+  color: #7cc4fa;
+  background: rgba(86, 156, 214, 0.14);
+  border: 1px solid rgba(86, 156, 214, 0.28);
+  padding: 1px 7px;
+  border-radius: 999px;
+}
+.ws-md-preview .ws-task-item {
+  list-style: none;
+  margin-left: -1.35em;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+.ws-md-preview .ws-task-item input[type="checkbox"] {
+  margin-top: 5px;
+  accent-color: #e4d4a7;
+  cursor: pointer;
+}
+
+/* Rich Markdown Embeds (Webpages, Video, Audio, Images) */
+.ws-embed-card {
+  margin: 1rem 0;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  background: #0e1015;
+  overflow: hidden;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.42);
+}
+
+.ws-embed-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 7px 12px;
+  background: #14171e;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  color: rgba(243, 241, 236, 0.62);
+}
+
+.ws-embed-bar a {
+  color: #e4d4a7;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+.ws-embed-bar a:hover {
+  text-decoration: underline;
+}
+
+.ws-video-aspect {
+  position: relative;
+  width: 100%;
+  padding-top: 56.25%;
+  background: #000;
+}
+
+.ws-video-aspect iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.ws-audio-card {
+  margin: 1rem 0;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(228, 212, 167, 0.24);
+  background: linear-gradient(135deg, rgba(228, 212, 167, 0.06), rgba(14, 16, 21, 0.96));
+}
+
+.ws-audio-card audio {
+  width: 100%;
+  height: 36px;
+  margin-top: 8px;
+  filter: invert(0.92) hue-rotate(180deg);
+  opacity: 0.9;
+}
+
+.ws-embed-figure {
+  margin: 1rem 0;
+}
+
+.ws-embed-figure img {
+  max-width: 100%;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  display: block;
+}
+
+.ws-embed-caption {
+  margin-top: 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: rgba(243, 241, 236, 0.45);
+}
+
+/* Butterfly Swarm & Graph View Overlay */
+#ws-butterfly-swarm {
+  position: fixed;
+  inset: 0;
+  z-index: 95;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.ws-swarm-butterfly {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 34px;
+  height: 34px;
+  will-change: transform, opacity;
+  filter: drop-shadow(0 0 10px rgba(228, 212, 167, 0.55));
+}
+
+.ws-swarm-butterfly .butterfly-wing-pane.wing-left {
+  animation: flapLeft 0.17s ease-in-out infinite alternate;
+}
+.ws-swarm-butterfly .butterfly-wing-pane.wing-right {
+  animation: flapRight 0.17s ease-in-out infinite alternate;
+}
+
+@keyframes wsSparkFade {
+  0% { transform: translate(-50%, -50%) scale(1); opacity: 0.9; }
+  100% { transform: translate(-50%, -50%) scale(0.1); opacity: 0; }
+}
+
+.ws-spark-dot {
+  position: fixed;
+  width: 4px;
+  height: 4px;
+  border-radius: 999px;
+  background: #e4d4a7;
+  box-shadow: 0 0 8px rgba(228, 212, 167, 0.9);
+  pointer-events: none;
+  animation: wsSparkFade 0.65s ease-out forwards;
+}
+
+@keyframes wsMorphBurst {
+  0% { transform: translate(-50%, -50%) scale(0.4); opacity: 0.95; }
+  100% { transform: translate(-50%, -50%) scale(2.8); opacity: 0; }
+}
+
+.ws-morph-ring {
+  position: fixed;
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  border: 1.5px solid #e4d4a7;
+  box-shadow: 0 0 16px rgba(228, 212, 167, 0.85);
+  pointer-events: none;
+  animation: wsMorphBurst 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+#ws-graph-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 85;
+  background:
+    radial-gradient(circle at 50% 45%, rgba(33, 82, 115, 0.16) 0%, transparent 55%),
+    radial-gradient(circle at 22% 20%, rgba(228, 212, 167, 0.06) 0%, transparent 45%),
+    #090a0d;
+  transition: opacity 0.42s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ==========================================================================
+   6. WORK & STUDY — WIDE CANVAS, FULLSCREEN & DESKTOP/MOBILE ADAPTATION
+   ========================================================================== */
+body.is-work-wide #main-stage {
+  max-width: min(1760px, 94vw);
+  padding: 0.75rem 1.25rem 1.25rem;
+}
+
+body.is-work-wide #chapter-page-view {
+  max-width: 100% !important;
+  padding-top: 0.2rem;
+}
+
+body.is-work-wide #chapter-topbar {
+  padding-bottom: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+body.is-work-wide #reader-folio {
+  padding: 1rem 1.25rem 1rem;
+}
+
+body.is-work-wide #reader-content {
+  gap: 0.75rem;
+  padding-top: 0;
+}
+
+body.is-work-wide #reader-content > header {
+  padding-bottom: 0.65rem;
+}
+
+body.is-work-wide #reader-content > header h1 {
+  font-size: clamp(1.45rem, 1.9vw, 1.95rem);
+  margin-top: 0.2rem;
+}
+
+body.is-work-wide #folio-footer {
+  margin-top: 0.85rem;
+  padding-top: 0.75rem;
+}
+
+/* Desktop: Obsidian workspace fills the wide reading stage comfortably */
+body.is-work-wide .ws-obsidian-shell {
+  height: clamp(650px, calc(100vh - 205px), 980px);
+  min-height: 600px;
+  max-height: none;
+}
+
+/* Large desktop: slightly wider sidebar so long note titles stay readable */
+@media (min-width: 1280px) {
+  body.is-work-wide .ws-sidebar {
+    width: 276px;
+  }
+  body.is-work-wide .ws-sidebar-inner {
+    width: 276px;
+    min-width: 276px;
+  }
+}
+
+/* Tablet adaptation */
+@media (min-width: 768px) and (max-width: 1024px) {
+  body.is-work-wide #main-stage {
+    max-width: 97vw;
+    padding: 0.65rem 0.85rem 1rem;
+  }
+  body.is-work-wide .ws-sidebar {
+    width: 224px;
+  }
+  body.is-work-wide .ws-sidebar-inner {
+    width: 224px;
+    min-width: 224px;
+  }
+}
+
+/* Fullscreen immersive mode (Desktop & Mobile) */
+body.ws-fullscreen-lock {
+  overflow: hidden;
+}
+
+.ws-obsidian-shell.is-fullscreen {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 75 !important;
+  width: 100vw !important;
+  height: 100dvh !important;
+  min-height: 100dvh !important;
+  max-height: 100dvh !important;
+  border-radius: 0 !important;
+  border: none !important;
+}
+
+/* Mobile drawer backdrop (hidden on desktop) */
+.ws-mobile-backdrop {
+  display: none;
+}
+
+/* Mobile responsive adaptation (< 768px) */
+@media (max-width: 767px) {
+  body.is-work-wide #main-stage {
+    max-width: 100vw;
+    padding: 0.4rem 0.45rem 0.75rem;
+  }
+
+  body.is-work-wide #chapter-topbar {
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.6rem;
+    gap: 0.5rem;
+  }
+
+  body.is-work-wide #reader-folio {
+    padding: 0.65rem;
+    border-radius: 14px;
+  }
+
+  body.is-work-wide #reader-content > header {
+    padding-right: 4.75rem;
+  }
+
+  body.is-work-wide .ws-obsidian-shell,
+  .ws-obsidian-shell {
+    height: calc(100dvh - 178px);
+    min-height: 460px;
+    max-height: none;
+    border-radius: 12px;
+  }
+
+  .ws-ribbon {
+    width: 40px;
+    padding: 8px 0;
+  }
+
+  .ws-sidebar {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 40px;
+    width: min(264px, calc(100% - 44px));
+    z-index: 26;
+    box-shadow: 12px 0 32px rgba(0, 0, 0, 0.78);
+  }
+
+  .ws-sidebar-inner {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .ws-mobile-backdrop.is-open {
+    display: block;
+    position: absolute;
+    inset: 0 0 0 40px;
+    z-index: 20;
+    background: rgba(5, 6, 9, 0.58);
+    backdrop-filter: blur(2px);
+  }
+
+  /* Prevent iOS Safari auto-zoom when focusing inputs */
+  #ws-editor-textarea,
+  #ws-sidebar-search-input,
+  #ws-embed-url-input,
+  #ws-embed-caption-input {
+    font-size: 16px;
+  }
+
+  /* Bottom links & media tools strip scrolls smoothly horizontally on mobile */
+  .ws-bottom-bar {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .ws-bottom-bar::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Hide butterfly speech bubble on narrow screens to keep header clean */
+  #butterfly-bubble {
+    display: none;
+  }
+}
