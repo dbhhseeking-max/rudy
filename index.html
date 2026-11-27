@@ -1,0 +1,1316 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Study English with Rudy — Interactive Press</title>
+  <meta name="description" content="Rudy's interactive editorial blog for English learning, Obsidian notes, daily moments, and curated vinyl acoustics." />
+  <meta property="og:title" content="Study English with Rudy — Interactive Press" />
+  <meta property="og:description" content="English learning notes, thinking models, daily moments, and vinyl acoustics." />
+  <meta property="og:type" content="website" />
+  <!-- Preconnect to Cloudflare R2 Media & Upload Edge for faster audio/cover/data startup -->
+  <link rel="preconnect" href="https://media.studyenglishwith.me" crossorigin>
+  <link rel="preconnect" href="https://upload.studyenglishwith.me" crossorigin>
+  <!-- Inline Golden Butterfly Favicon (eliminates /favicon.ico 404s) -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%230c0d0f'/%3E%3Cpath d='M32 30 C22 12, 6 11, 9 28 C11 36, 22 37, 32 34 Z' fill='%23e4d4a7'/%3E%3Cpath d='M32 30 C42 12, 58 11, 55 28 C53 36, 42 37, 32 34 Z' fill='%23e4d4a7'/%3E%3Cpath d='M32 34 C22 37, 12 44, 17 52 C21 57, 29 48, 32 38 Z' fill='%23b89b5e'/%3E%3Cpath d='M32 34 C42 37, 52 44, 47 52 C43 57, 35 48, 32 38 Z' fill='%23b89b5e'/%3E%3C/svg%3E" />
+  <!-- Precompiled Static Tailwind CSS (versioned to prevent stale browser/CDN cache) -->
+  <link rel="stylesheet" href="./css/tailwind.min.css?v=20261127" />
+  <!-- Non-blocking Editorial Serif & Mono Fonts (prevents Google Fonts stalls in Mainland China) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300;1,6..72,400&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+  <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300;1,6..72,400&display=swap" rel="stylesheet"></noscript>
+
+  <link rel="stylesheet" href="./css/styles.css?v=20261127" />
+</head>
+<body class="antialiased selection:bg-[#e4d4a7]/25 selection:text-[#e4d4a7]">
+
+  <!-- ========================================================================
+       FLOATING SVG BUTTERFLY ACTOR WITH SPEECH BUBBLE
+       ======================================================================== -->
+  <!-- Tactile 3D Book Page-Turn Transition Layer (Pointer-Events None) -->
+  <div id="book-pageturn-overlay" class="hidden" aria-hidden="true"></div>
+
+  <!-- Silky Breeze & Scattering Butterflies Cut-In Layer (Pointer-Events None) -->
+  <div id="breeze-transition-stage" class="hidden" aria-hidden="true"></div>
+
+  <div id="butterfly-actor" onclick="handleButterflyClick()" title="Tap butterfly to flutter">
+    <div id="butterfly-bubble">
+      <span id="butterfly-bubble-text">Close this page?</span>
+      <button
+        id="butterfly-bubble-edit-btn"
+        type="button"
+        hidden
+        onclick="openButterflyBubbleEditor(event)"
+        title="Edit butterfly bubble text"
+        aria-label="Edit butterfly bubble text"
+        class="hidden ml-1.5 inline-flex items-center justify-center w-4 h-4 rounded-full bg-[#e4d4a7]/20 hover:bg-[#e4d4a7]/40 text-[#e4d4a7] text-[10px] leading-none transition cursor-pointer"
+      >✎</button>
+    </div>
+    <div class="butterfly-3d-stage">
+      <!-- Independent Left Wing Plane (Hinged strictly at right edge x=50) -->
+      <div class="butterfly-wing-pane wing-left">
+        <svg viewBox="0 0 50 100" class="w-full h-full overflow-visible">
+          <defs>
+            <linearGradient id="wingGradUpperL" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#fff8e6" stop-opacity="0.96" />
+              <stop offset="55%" stop-color="#e4d4a7" stop-opacity="0.9" />
+              <stop offset="100%" stop-color="#b89b5e" stop-opacity="0.94" />
+            </linearGradient>
+            <linearGradient id="wingGradLowerL" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#f3e7c6" stop-opacity="0.92" />
+              <stop offset="100%" stop-color="#9e8249" stop-opacity="0.9" />
+            </linearGradient>
+          </defs>
+          <path d="M48.5 47 C33 17, 6 15, 10 42 C13 55, 33 56, 48.5 52 Z" fill="url(#wingGradUpperL)" stroke="#fffdf7" stroke-width="0.8"/>
+          <path d="M48.5 52 C33 56, 16 68, 24 82 C31 91, 44 76, 48.5 58 Z" fill="url(#wingGradLowerL)" stroke="#fffdf7" stroke-width="0.7"/>
+          <path d="M47 49 Q28 34 15 36 M47 51 Q30 66 26 77" stroke="#6b5628" stroke-width="0.6" fill="none" opacity="0.55"/>
+        </svg>
+      </div>
+
+      <!-- Independent Right Wing Plane (Hinged strictly at left edge x=50) -->
+      <div class="butterfly-wing-pane wing-right">
+        <svg viewBox="50 0 50 100" class="w-full h-full overflow-visible">
+          <defs>
+            <linearGradient id="wingGradUpperR" x1="100%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#fff8e6" stop-opacity="0.96" />
+              <stop offset="55%" stop-color="#e4d4a7" stop-opacity="0.9" />
+              <stop offset="100%" stop-color="#b89b5e" stop-opacity="0.94" />
+            </linearGradient>
+            <linearGradient id="wingGradLowerR" x1="100%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#f3e7c6" stop-opacity="0.92" />
+              <stop offset="100%" stop-color="#9e8249" stop-opacity="0.9" />
+            </linearGradient>
+          </defs>
+          <path d="M51.5 47 C67 17, 94 15, 90 42 C87 55, 67 56, 51.5 52 Z" fill="url(#wingGradUpperR)" stroke="#fffdf7" stroke-width="0.8"/>
+          <path d="M51.5 52 C67 56, 84 68, 76 82 C69 91, 56 76, 51.5 58 Z" fill="url(#wingGradLowerR)" stroke="#fffdf7" stroke-width="0.7"/>
+          <path d="M53 49 Q72 34 85 36 M53 51 Q70 66 74 77" stroke="#6b5628" stroke-width="0.6" fill="none" opacity="0.55"/>
+        </svg>
+      </div>
+
+      <!-- Central Thorax, Head & Antennae -->
+      <div class="butterfly-body-pane">
+        <svg viewBox="0 0 100 100" class="w-full h-full overflow-visible">
+          <ellipse cx="50" cy="52" rx="1.7" ry="12" fill="#3a2f1d" stroke="#e4d4a7" stroke-width="0.35" />
+          <circle cx="50" cy="39.5" r="1.6" fill="#3a2f1d" />
+          <path d="M49.2 38.5 Q44 30 40 28 M50.8 38.5 Q56 30 60 28" stroke="#e4d4a7" stroke-width="0.9" fill="none" stroke-linecap="round"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       FLYING PHYSICAL VINYL ACTOR (SLIDES FROM SLEEVE INTO TOP CAPSULE)
+       ======================================================================== -->
+  <div id="flying-vinyl-actor" class="w-[80px] h-[80px]">
+    <div class="vinyl-disc is-spinning w-full h-full flex items-center justify-center">
+      <div id="flying-vinyl-label" class="relative w-6 h-6 rounded-full border border-[#e4d4a7]/55 overflow-hidden flex items-center justify-center z-10">
+        <span class="w-1.5 h-1.5 rounded-full bg-[#0c0d0f] relative z-10"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       TOP EDITORIAL NAVIGATION BAR (SCROLLS NATURALLY WITH PAGE)
+       ======================================================================== -->
+  <header
+    id="site-topbar"
+    class="site-topbar w-full border-b border-white/10"
+  >
+    <div class="site-topbar-brand flex items-center gap-2.5 min-w-0">
+      <button
+        type="button"
+        onclick="returnToBookshelf()"
+        title="Return to Bookshelf"
+        class="site-brand-btn px-3.5 py-1 rounded-lg bg-[#e4d4a7]/15 border border-[#e4d4a7]/40 text-[#e4d4a7] hover:bg-[#e4d4a7]/25 font-serif-editorial text-base sm:text-xl tracking-wide font-medium shadow-[0_0_24px_rgba(228,212,167,0.14)] transition cursor-pointer whitespace-nowrap"
+      >
+        StudyEnglishWith.me
+      </button>
+      <span class="site-brand-sep text-white/20">|</span>
+      <span class="site-brand-sub font-mono-code text-[11px] tracking-[0.16em] uppercase text-white/45 whitespace-nowrap">
+        [ RUDY'S PRESS ]
+      </span>
+      <!-- Discreet mobile secret-tap star -->
+      <span onclick="registerSecretTap()" class="site-mobile-star text-xs text-[#e4d4a7]/75 select-none cursor-default px-1">✦</span>
+    </div>
+
+    <!-- Motto Display & Butterfly Global Search Trigger -->
+    <div class="site-topbar-motto flex items-center justify-end gap-2.5 text-[#e4d4a7]/90 min-w-0">
+      <button
+        type="button"
+        onclick="openGlobalSearchModal()"
+        title="Search Notes, Moments & Vinyl (⌘K)"
+        aria-label="Global Search"
+        class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-[#e4d4a7]/30 bg-[#e4d4a7]/[0.07] hover:bg-[#e4d4a7]/18 hover:border-[#e4d4a7]/55 text-[11px] font-mono-code text-[#e4d4a7] transition cursor-pointer shrink-0"
+      >
+        <svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 64 64" aria-hidden="true">
+          <path d="M32 30 C22 12, 6 11, 9 28 C11 36, 22 37, 32 34 Z" fill="#e4d4a7"/>
+          <path d="M32 30 C42 12, 58 11, 55 28 C53 36, 42 37, 32 34 Z" fill="#e4d4a7"/>
+          <path d="M32 34 C22 37, 12 44, 17 52 C21 57, 29 48, 32 38 Z" fill="#b89b5e"/>
+          <path d="M32 34 C42 37, 52 44, 47 52 C43 57, 35 48, 32 38 Z" fill="#b89b5e"/>
+        </svg>
+        <span class="hidden sm:inline">Search</span>
+        <kbd class="hidden md:inline text-[9px] text-white/45 border border-white/15 rounded px-1">⌘K</kbd>
+      </button>
+      <span onclick="registerSecretTap()" class="text-xs opacity-75 select-none cursor-default">✦</span>
+      <p class="font-serif-editorial italic text-base sm:text-lg tracking-wide whitespace-nowrap truncate">
+        "Stay hungry, stay foolish"
+      </p>
+    </div>
+  </header>
+
+  <!-- ========================================================================
+       FLOATING TOP-CENTER DYNAMIC VINYL CAPSULE (FIXED ON SCROLL + REAL-TIME HALO)
+       ======================================================================== -->
+  <aside
+    id="top-vinyl-dock"
+    aria-label="Top Floating Vinyl Player"
+    class="hidden opacity-0 -translate-y-2 flex items-center justify-center pointer-events-none"
+  >
+    <!-- Expanded Top Pill (Prev / Play / Next / Loop / Collapse + Champagne-Gold Halo) -->
+    <div
+      id="top-pill-expanded"
+      class="js-top-pill-shell top-pill-embedded pointer-events-auto relative rounded-full border border-[#e4d4a7]/32 bg-[#121216]/94 backdrop-blur-md flex items-center gap-1.5 sm:gap-2.5 px-2 sm:px-3 max-w-full"
+    >
+      <!-- Spinning Mini Vinyl + Audio-Reactive Champagne-Gold Halo + Title -->
+      <button
+        type="button"
+        onclick="toggleTurntableSheet(true)"
+        title="Open 12-inch Turntable Deck"
+        class="flex items-center gap-2 min-w-0 text-left cursor-pointer group pr-0.5"
+      >
+        <div class="top-disc-halo-wrap relative shrink-0 flex items-center justify-center">
+          <canvas id="top-capsule-halo-canvas" class="top-capsule-halo-canvas" aria-hidden="true"></canvas>
+          <div id="top-fly-target" class="vinyl-disc js-spin-disc top-pill-disc relative z-10 w-7 h-7 shrink-0 flex items-center justify-center group-hover:scale-105 transition-transform">
+            <div class="js-disc-label relative w-3 h-3 rounded-full border border-[#e4d4a7]/50 overflow-hidden flex items-center justify-center z-10">
+              <span class="w-1 h-1 rounded-full bg-[#0c0d0f]"></span>
+            </div>
+          </div>
+        </div>
+        <div class="min-w-0">
+          <div class="js-track-title top-pill-title font-serif-editorial text-xs sm:text-sm text-[#f3f1ec] leading-tight truncate">
+            Select a Record
+          </div>
+          <div id="top-pill-sub" class="top-pill-sub font-mono-code text-[8px] sm:text-[9px] tracking-wider uppercase text-[#e4d4a7]/70 truncate">
+            TAP DECK ↑
+          </div>
+        </div>
+      </button>
+
+      <!-- Full Inline Transport Controls: Prev, Play/Pause, Next, Loop, Collapse -->
+      <div class="flex items-center gap-0.5 pl-1.5 border-l border-white/10 shrink-0">
+        <button
+          type="button"
+          onclick="playAdjacentVinyl(-1)"
+          title="Previous Track"
+          aria-label="Previous track"
+          class="w-7 h-7 rounded-full hover:bg-white/[0.07] text-white/70 hover:text-[#e4d4a7] flex items-center justify-center transition cursor-pointer"
+        >
+          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="19 20 9 12 19 4 19 20"></polygon><line x1="5" y1="19" x2="5" y2="5"></line>
+          </svg>
+        </button>
+
+        <button
+          type="button"
+          onclick="toggleVinylPlayPause()"
+          title="Play / Pause"
+          aria-label="Play or pause"
+          class="js-play-btn w-7 h-7 rounded-full bg-[#e4d4a7] hover:bg-[#f3e6c2] text-[#0e0e11] flex items-center justify-center shadow-[0_0_14px_rgba(228,212,167,0.28)] transition cursor-pointer"
+        ></button>
+
+        <button
+          type="button"
+          onclick="playAdjacentVinyl(1)"
+          title="Next Track"
+          aria-label="Next track"
+          class="w-7 h-7 rounded-full hover:bg-white/[0.07] text-white/70 hover:text-[#e4d4a7] flex items-center justify-center transition cursor-pointer"
+        >
+          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="5 4 15 12 5 20 5 4"></polygon><line x1="19" y1="5" x2="19" y2="19"></line>
+          </svg>
+        </button>
+
+        <button
+          type="button"
+          onclick="cycleVinylLoopMode()"
+          title="Loop Mode"
+          aria-label="Cycle loop mode"
+          class="js-loop-btn top-pill-loop-btn relative w-7 h-7 rounded-full hover:bg-white/[0.07] flex items-center justify-center transition cursor-pointer text-[#e4d4a7]"
+        ></button>
+
+        <button
+          type="button"
+          onclick="setTopVinylCollapsed(true)"
+          title="Collapse Player"
+          aria-label="Collapse player"
+          class="w-6 h-7 rounded-full hover:bg-white/[0.07] text-white/45 hover:text-[#e4d4a7] flex items-center justify-center transition cursor-pointer"
+        >
+          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="18 15 12 9 6 15"></polyline>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Hairline bottom progress bar inside capsule -->
+      <div class="absolute bottom-0 left-5 right-5 h-[2px] rounded-full overflow-hidden bg-white/5 pointer-events-none">
+        <div id="top-pill-progress-fill" class="h-full w-0 bg-gradient-to-r from-[#d47a9c] to-[#e4d4a7]"></div>
+      </div>
+    </div>
+
+    <!-- Collapsed Minimal Top Orb (Zero Reading Obstruction + Real-Time Halo) -->
+    <button
+      id="top-pill-collapsed"
+      type="button"
+      onclick="setTopVinylCollapsed(false)"
+      title="Expand Vinyl Player"
+      class="hidden pointer-events-auto js-top-pill-shell top-pill-orb relative px-2.5 py-1 rounded-full bg-[#141418]/94 border border-[#e4d4a7]/40 backdrop-blur-md shadow-xl flex items-center gap-2 hover:scale-105 transition cursor-pointer"
+    >
+      <div class="top-orb-halo-wrap relative flex items-center justify-center">
+        <canvas id="top-orb-halo-canvas" class="top-orb-halo-canvas" aria-hidden="true"></canvas>
+        <div id="top-fly-target-mini" class="vinyl-disc js-spin-disc relative z-10 w-6 h-6 flex items-center justify-center">
+          <div class="js-disc-label relative w-2.5 h-2.5 rounded-full border border-[#e4d4a7]/50 overflow-hidden flex items-center justify-center z-10"></div>
+        </div>
+      </div>
+      <span id="top-orb-status-dot" class="w-2 h-2 rounded-full bg-white/35"></span>
+      <svg class="w-3 h-3 text-white/55" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="6 9 12 15 18 9"></polyline>
+      </svg>
+    </button>
+  </aside>
+
+  <!-- ========================================================================
+       MAIN STAGE: VIEW 1 (3D BOOKSHELF) & VIEW 2 (DEDICATED CHAPTER PAGE)
+       ======================================================================== -->
+  <main id="main-stage" class="max-w-6xl mx-auto px-4 sm:px-8 lg:px-10 py-8 sm:py-12">
+
+    <!-- ======================================================================
+         VIEW 1: CENTERED 3D BOOKSHELF STAGE
+         ====================================================================== -->
+    <div id="bookshelf-view" class="stage-transition flex flex-col items-center justify-center min-h-[calc(100vh-150px)]">
+
+      <!-- Floating Italic Serif Title Header -->
+      <div class="w-full max-w-3xl overflow-x-auto pb-3 mb-2 border-b border-white/10">
+        <div id="shelf-titles-bar" class="flex items-baseline justify-start sm:justify-center gap-5 sm:gap-8 min-w-max px-1">
+          <!-- Populated dynamically via JS -->
+        </div>
+      </div>
+
+      <!-- 3D Bookshelf Container -->
+      <div class="w-full overflow-x-auto py-8 px-2 flex justify-start sm:justify-center">
+        <div id="bookshelf" class="bookshelf-perspective flex items-end gap-3 sm:gap-4 min-w-max">
+
+          <!-- BOOK 1 (R): Rudy's Profile -->
+          <article id="book-profile" data-book="profile" class="book-slot" tabindex="0" role="button" aria-label="Open Rudy's Profile">
+            <div class="book-spine theme-profile">
+              <div class="spine-content">
+                <span class="font-mono-code text-[9px] tracking-[0.2em] uppercase opacity-75">VOL.01</span>
+                <h2 class="vertical-title font-serif-editorial text-lg sm:text-xl tracking-wide font-normal">
+                  Rudy's Profile
+                </h2>
+                <div class="w-6 h-6 rounded border border-current/40 flex items-center justify-center font-serif-editorial text-xs italic">
+                  R
+                </div>
+              </div>
+            </div>
+            <div class="book-cover theme-profile">
+              <div class="flex justify-between items-start border-b border-current/20 pb-3">
+                <div>
+                  <p class="font-mono-code text-[10px] tracking-[0.2em] uppercase opacity-80">VOLUME 01 · PROFILE</p>
+                  <h3 class="font-serif-editorial text-2xl sm:text-3xl mt-1 leading-tight">Rudy's Profile</h3>
+                </div>
+                <span class="w-7 h-7 rounded border border-current/40 flex items-center justify-center font-serif-editorial italic text-sm">R</span>
+              </div>
+
+              <div class="my-auto py-3 flex justify-center">
+                <svg viewBox="0 0 180 120" class="w-40 h-28 opacity-90">
+                  <g stroke="currentColor" stroke-width="1" fill="none">
+                    <rect x="14" y="16" width="38" height="22" rx="2" />
+                    <rect x="72" y="16" width="44" height="22" rx="2" fill="currentColor" fill-opacity="0.15"/>
+                    <rect x="132" y="48" width="34" height="24" rx="2" />
+                    <rect x="44" y="76" width="52" height="24" rx="2" fill="currentColor" fill-opacity="0.15"/>
+                    <path d="M52 27 H72 M94 38 V60 H132 M70 60 V76 M149 72 V88 H96" />
+                    <circle cx="94" cy="60" r="2.5" fill="currentColor" />
+                    <circle cx="70" cy="60" r="2.5" fill="currentColor" />
+                  </g>
+                </svg>
+              </div>
+
+              <div class="border-t border-current/20 pt-2.5 flex justify-between items-center text-[11px] font-mono-code opacity-85">
+                <span>STUDYENGLISHWITH.ME</span>
+                <span>OPENING...</span>
+              </div>
+            </div>
+          </article>
+
+          <!-- BOOK 2 (U): Upward: Work & Study -->
+          <article id="book-work" data-book="work" class="book-slot" tabindex="0" role="button" aria-label="Open Upward: Work and Study">
+            <div class="book-spine theme-work">
+              <div class="spine-content">
+                <span class="font-mono-code text-[9px] tracking-[0.2em] uppercase opacity-75">VOL.02</span>
+                <h2 class="vertical-title font-serif-editorial text-lg sm:text-xl tracking-wide font-normal">
+                  Upward: Work &amp; Study
+                </h2>
+                <div class="w-6 h-6 rounded border border-current/40 flex items-center justify-center font-serif-editorial text-xs italic">
+                  U
+                </div>
+              </div>
+            </div>
+            <div class="book-cover theme-work">
+              <div class="flex justify-between items-start border-b border-current/20 pb-3">
+                <div>
+                  <p class="font-mono-code text-[10px] tracking-[0.2em] uppercase opacity-80">VOLUME 02 · WORK &amp; STUDY</p>
+                  <h3 class="font-serif-editorial text-2xl sm:text-3xl mt-1 leading-tight">Upward: Work &amp; Study</h3>
+                </div>
+                <span class="w-7 h-7 rounded border border-current/40 flex items-center justify-center font-serif-editorial italic text-sm">U</span>
+              </div>
+
+              <div class="my-auto py-3 flex justify-center">
+                <svg viewBox="0 0 180 120" class="w-40 h-28 opacity-90">
+                  <g stroke="currentColor" stroke-width="1" fill="none">
+                    <circle cx="90" cy="60" r="42" />
+                    <circle cx="90" cy="60" r="26" stroke-dasharray="3 3" />
+                    <line x1="34" y1="60" x2="146" y2="60" />
+                    <line x1="90" y1="10" x2="90" y2="110" />
+                    <polygon points="90,34 97,60 90,86 83,60" fill="currentColor" fill-opacity="0.2" />
+                  </g>
+                </svg>
+              </div>
+
+              <div class="border-t border-current/20 pt-2.5 flex justify-between items-center text-[11px] font-mono-code opacity-85">
+                <span>NOTES &amp; CHUNKS</span>
+                <span>OPENING...</span>
+              </div>
+            </div>
+          </article>
+
+          <!-- BOOK 3 (D): Daily Moments -->
+          <article id="book-moment" data-book="moment" class="book-slot" tabindex="0" role="button" aria-label="Open Daily Moments">
+            <div class="book-spine theme-moment">
+              <div class="spine-content">
+                <span class="font-mono-code text-[9px] tracking-[0.2em] uppercase opacity-75">VOL.03</span>
+                <h2 class="vertical-title font-serif-editorial text-lg sm:text-xl tracking-wide font-medium">
+                  Daily Moments
+                </h2>
+                <div class="w-6 h-6 rounded border border-current/40 flex items-center justify-center font-serif-editorial text-xs italic">
+                  D
+                </div>
+              </div>
+            </div>
+            <div class="book-cover theme-moment">
+              <div class="flex justify-between items-start border-b border-current/20 pb-3">
+                <div>
+                  <p class="font-mono-code text-[10px] tracking-[0.2em] uppercase opacity-75">VOLUME 03 · MOMENTS</p>
+                  <h3 class="font-serif-editorial text-2xl sm:text-3xl mt-1 leading-tight">Daily Moments</h3>
+                </div>
+                <span class="w-7 h-7 rounded border border-current/40 flex items-center justify-center font-serif-editorial italic text-sm">D</span>
+              </div>
+
+              <div class="my-auto py-3 flex justify-center">
+                <svg viewBox="0 0 180 120" class="w-40 h-28 opacity-85">
+                  <g stroke="currentColor" stroke-width="1.1" fill="none">
+                    <rect x="42" y="20" width="96" height="80" rx="2" />
+                    <line x1="90" y1="20" x2="90" y2="100" />
+                    <line x1="54" y1="38" x2="80" y2="38" />
+                    <line x1="54" y1="50" x2="80" y2="50" />
+                    <line x1="54" y1="62" x2="74" y2="62" />
+                    <line x1="100" y1="38" x2="126" y2="38" />
+                    <line x1="100" y1="50" x2="126" y2="50" />
+                    <line x1="100" y1="62" x2="120" y2="62" />
+                  </g>
+                </svg>
+              </div>
+
+              <div class="border-t border-current/20 pt-2.5 flex justify-between items-center text-[11px] font-mono-code opacity-80">
+                <span>LIFE &amp; SNAPSHOTS</span>
+                <span>OPENING...</span>
+              </div>
+            </div>
+          </article>
+
+          <!-- BOOK 4 (Y): Yearning for Art -->
+          <article id="book-art" data-book="art" class="book-slot" tabindex="0" role="button" aria-label="Open Yearning for Art">
+            <div class="book-spine theme-art">
+              <div class="spine-content">
+                <span class="font-mono-code text-[9px] tracking-[0.2em] uppercase opacity-75">VOL.04</span>
+                <h2 class="vertical-title font-serif-editorial text-lg sm:text-xl tracking-wide font-normal">
+                  Yearning for Art
+                </h2>
+                <div class="w-6 h-6 rounded border border-current/40 flex items-center justify-center font-serif-editorial text-xs italic">
+                  Y
+                </div>
+              </div>
+            </div>
+            <div class="book-cover theme-art">
+              <div class="flex justify-between items-start border-b border-current/20 pb-3">
+                <div>
+                  <p class="font-mono-code text-[10px] tracking-[0.2em] uppercase opacity-80">VOLUME 04 · ART</p>
+                  <h3 class="font-serif-editorial text-2xl sm:text-3xl mt-1 leading-tight">Yearning for Art</h3>
+                </div>
+                <span class="w-7 h-7 rounded border border-current/40 flex items-center justify-center font-serif-editorial italic text-sm">Y</span>
+              </div>
+
+              <div class="my-auto py-3 flex justify-center">
+                <svg viewBox="0 0 180 120" class="w-40 h-28 opacity-90">
+                  <g stroke="currentColor" stroke-width="1" fill="none">
+                    <circle cx="90" cy="60" r="40" />
+                    <circle cx="90" cy="60" r="30" stroke-opacity="0.5" />
+                    <circle cx="90" cy="60" r="20" stroke-opacity="0.5" />
+                    <circle cx="90" cy="60" r="8" fill="currentColor" fill-opacity="0.25" />
+                    <circle cx="90" cy="60" r="2" fill="currentColor" />
+                  </g>
+                </svg>
+              </div>
+
+              <div class="border-t border-current/20 pt-2.5 flex justify-between items-center text-[11px] font-mono-code opacity-85">
+                <span>GALLERY &amp; SOUNDS</span>
+                <span>OPENING...</span>
+              </div>
+            </div>
+          </article>
+
+        </div>
+      </div>
+
+      <!-- Subtle Bookshelf Base Ledge -->
+      <div class="w-full max-w-3xl h-[1px] bg-gradient-to-r from-transparent via-[#e4d4a7]/40 to-transparent"></div>
+      <p class="mt-4 text-xs text-white/45 font-mono-code tracking-wide text-center">
+        Click any book on the shelf to unfold its cover and enter its chapter page.
+      </p>
+    </div>
+
+    <!-- ======================================================================
+         VIEW 2: DEDICATED BOOK CONTENT PAGE (REVEALED AFTER BOOK OPENS)
+         ====================================================================== -->
+    <div id="chapter-page-view" class="stage-transition hidden opacity-0 max-w-3xl mx-auto">
+
+      <!-- Clean Left-Aligned Volume Switcher Bar (Butterfly Perches on Active Tab) -->
+      <div id="chapter-topbar" class="chapter-topbar-nav relative flex flex-wrap items-center justify-start gap-2 pb-3 border-b border-white/10">
+        <!-- Quick Chapter Tabs -->
+        <div id="chapter-tabs" class="flex flex-wrap items-center gap-1.5">
+          <!-- Populated dynamically via JS -->
+        </div>
+      </div>
+
+      <!-- Full Editorial Reading Page Container with Top-Right Close Button -->
+      <article id="reader-folio" class="relative rounded-2xl border border-white/12 bg-[#131518]/95 backdrop-blur-md p-6 sm:p-10 lg:p-12 shadow-2xl">
+
+        <!-- Top-Right Close Page Button (Strictly Separated from Navigation Tabs) -->
+        <button
+          id="btn-close-book"
+          type="button"
+          onclick="returnToBookshelf()"
+          aria-label="Close this page and return to bookshelf"
+          class="folio-close-btn absolute top-4 right-4 sm:top-6 sm:right-6 z-20 inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-[#e4d4a7]/40 bg-[#1a1916] hover:bg-[#e4d4a7]/20 text-[11px] font-mono-code text-[#e4d4a7] shadow-lg transition cursor-pointer"
+        >
+          <span>✕</span>
+          <span>CLOSE</span>
+        </button>
+
+        <div id="reader-content" class="space-y-6">
+          <!-- Dynamic Book Content Injected Here -->
+        </div>
+
+        <!-- Bottom Page Navigation Footer -->
+        <div id="folio-footer" class="pt-8 mt-10 border-t border-white/10 flex flex-wrap items-center justify-between gap-4">
+          <button
+            type="button"
+            onclick="returnToBookshelf()"
+            class="font-mono-code text-xs text-white/55 hover:text-[#e4d4a7] transition cursor-pointer"
+          >
+            [ CLOSE &amp; RETURN TO SHELF ]
+          </button>
+          <div class="flex items-center gap-2" id="folio-dots">
+            <!-- Quick dot indicators -->
+          </div>
+        </div>
+      </article>
+
+    </div>
+
+  </main>
+
+  <!-- ========================================================================
+       DIRECT CORRESPONDENCE MODAL (POPUP WITH MINIMIZE / COLLAPSE & CLOSE)
+       ======================================================================== -->
+  <div
+    id="direct-message-modal"
+    onclick="if (event.target === this) minimizeDirectMessageModal()"
+    class="sheet-backdrop hidden opacity-0 fixed inset-0 z-50 bg-black/72 backdrop-blur-sm flex items-end sm:items-center justify-center sm:p-4"
+  >
+    <div
+      id="direct-message-panel"
+      class="sheet-panel translate-y-10 opacity-0 w-full sm:max-w-md rounded-t-3xl sm:rounded-2xl border border-[#e4d4a7]/35 bg-gradient-to-b from-[#17181c] to-[#111216] p-6 sm:p-7 shadow-[0_24px_70px_rgba(0,0,0,0.88)] space-y-5"
+    >
+      <!-- Dialog Header with Minimize & Close Buttons -->
+      <div class="flex items-start justify-between gap-3 border-b border-white/10 pb-3.5">
+        <div>
+          <p class="font-mono-code text-[10px] tracking-[0.2em] uppercase text-[#e4d4a7]/80">
+            ✦ PRIVATE CORRESPONDENCE
+          </p>
+          <h3 class="font-serif-editorial text-2xl text-[#f3f1ec] mt-1">
+            Write a Note to Rudy
+          </h3>
+        </div>
+        <div class="flex items-center gap-1.5 shrink-0">
+          <button
+            type="button"
+            onclick="minimizeDirectMessageModal()"
+            title="Minimize"
+            aria-label="Minimize message dialog"
+            class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full border border-white/12 bg-white/[0.04] hover:border-[#e4d4a7]/45 text-[10px] font-mono-code text-white/65 hover:text-[#e4d4a7] transition cursor-pointer"
+          >
+            <span>—</span>
+            <span>Hide</span>
+          </button>
+          <button
+            type="button"
+            onclick="closeDirectMessageModal()"
+            title="Close"
+            aria-label="Close message dialog"
+            class="w-7 h-7 rounded-full border border-white/12 bg-white/[0.04] hover:border-rose-400/50 text-xs font-mono-code text-white/55 hover:text-rose-300 flex items-center justify-center transition cursor-pointer"
+          >
+            ✕
+          </button>
+        </div>
+      </div>
+
+      <form onsubmit="handleDirectMessageSubmit(event)" class="space-y-3.5">
+        <!-- Anti-Spam Honeypot (Invisible to human readers) -->
+        <div class="sr-only" aria-hidden="true">
+          <label for="dm-website-hp">Website</label>
+          <input id="dm-website-hp" name="website" type="text" tabindex="-1" autocomplete="off" />
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div class="space-y-1">
+            <label for="dm-sender-name" class="block font-mono-code text-[10px] uppercase tracking-wider text-white/45">
+              Name (Optional)
+            </label>
+            <input
+              id="dm-sender-name"
+              type="text"
+              maxlength="60"
+              placeholder="How should Rudy call you?"
+              class="w-full rounded-xl bg-black/45 border border-white/12 px-3 py-2 text-xs text-[#f3f1ec] placeholder-white/30 focus:outline-none focus:border-[#e4d4a7]"
+            />
+          </div>
+          <div class="space-y-1">
+            <label for="dm-sender-contact" class="block font-mono-code text-[10px] uppercase tracking-wider text-white/45">
+              Reply Contact (Optional)
+            </label>
+            <input
+              id="dm-sender-contact"
+              type="text"
+              maxlength="100"
+              placeholder="Email / WeChat / Handle"
+              class="w-full rounded-xl bg-black/45 border border-white/12 px-3 py-2 text-xs text-[#f3f1ec] placeholder-white/30 focus:outline-none focus:border-[#e4d4a7]"
+            />
+          </div>
+        </div>
+
+        <div class="space-y-1">
+          <label for="dm-message-body" class="block font-mono-code text-[10px] uppercase tracking-wider text-white/45">
+            Message
+          </label>
+          <textarea
+            id="dm-message-body"
+            rows="4"
+            maxlength="2000"
+            required
+            placeholder="Share a thought, an English phrase, or simply say hello..."
+            class="w-full rounded-xl bg-black/45 border border-white/15 p-3 text-sm leading-relaxed text-[#f3f1ec] placeholder-white/30 focus:outline-none focus:border-[#e4d4a7]"
+          ></textarea>
+        </div>
+
+        <p id="dm-message-status" class="font-mono-code text-[11px] min-h-[16px] text-white/50"></p>
+
+        <div class="flex items-center justify-between gap-3 pt-1">
+          <span class="font-mono-code text-[10px] text-white/35">
+            Delivered privately to Rudy
+          </span>
+          <button
+            id="btn-send-dm-message"
+            type="submit"
+            class="px-5 py-2.5 rounded-xl bg-[#e4d4a7] hover:bg-[#f2e5bf] text-[#0c0d0f] font-mono-code text-xs font-medium tracking-wider uppercase transition cursor-pointer shadow-[0_6px_22px_rgba(228,212,167,0.22)]"
+          >
+            SEND NOTE ↵
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Minimized Message Draft Floating Pill (Appears when user clicks "Hide") -->
+  <div
+    id="direct-minimized-pill"
+    class="hidden fixed bottom-5 right-4 sm:right-6 z-40 rounded-full border border-[#e4d4a7]/45 bg-[#15161a]/95 backdrop-blur-md shadow-[0_12px_32px_rgba(0,0,0,0.8)] pl-3.5 pr-1.5 py-1.5 flex items-center gap-2.5"
+  >
+    <button
+      type="button"
+      onclick="openDirectMessageModal()"
+      class="flex items-center gap-2 text-left cursor-pointer group"
+    >
+      <span class="w-2 h-2 rounded-full bg-[#e4d4a7] animate-pulse"></span>
+      <span class="font-mono-code text-[11px] text-[#e4d4a7] group-hover:text-white transition">
+        Note to Rudy · Expand ↗
+      </span>
+    </button>
+    <button
+      type="button"
+      onclick="closeDirectMessageModal()"
+      aria-label="Close minimized draft"
+      class="w-6 h-6 rounded-full hover:bg-white/10 text-white/45 hover:text-rose-300 font-mono-code text-[10px] flex items-center justify-center transition cursor-pointer"
+    >
+      ✕
+    </button>
+  </div>
+
+  <!-- ========================================================================
+       IMMERSIVE 12-INCH VINYL TURNTABLE SHEET (OPENS FROM TOP CAPSULE)
+       ======================================================================== -->
+  <div
+    id="vinyl-sheet-backdrop"
+    onclick="if (event.target === this) toggleTurntableSheet(false)"
+    class="sheet-backdrop hidden opacity-0 fixed inset-0 z-50 bg-black/72 backdrop-blur-sm flex items-end sm:items-center justify-center sm:p-4"
+  >
+    <div
+      id="vinyl-sheet-panel"
+      class="sheet-panel translate-y-10 opacity-0 w-full sm:max-w-md rounded-t-3xl sm:rounded-3xl border border-[#e4d4a7]/30 bg-gradient-to-b from-[#19161b] to-[#101114] p-6 pb-8 sm:p-7 shadow-[0_-18px_60px_rgba(0,0,0,0.88)] space-y-5"
+    >
+      <div class="flex items-center justify-between">
+        <span class="font-mono-code text-[10px] tracking-[0.2em] uppercase text-[#e4d4a7]/80">
+          RUDY'S LISTENING ROOM
+        </span>
+        <div class="flex items-center gap-2">
+          <button
+            id="sheet-goto-art-btn"
+            type="button"
+            onclick="toggleTurntableSheet(false); switchChapterDirectly('art');"
+            class="hidden px-2.5 py-1 rounded-full border border-[#e4d4a7]/35 bg-[#e4d4a7]/10 font-mono-code text-[10px] text-[#e4d4a7] transition cursor-pointer"
+          >
+            ART ↗
+          </button>
+          <button
+            type="button"
+            onclick="toggleTurntableSheet(false)"
+            class="px-2.5 py-1 rounded-full border border-white/10 hover:border-[#e4d4a7]/40 font-mono-code text-[10px] text-white/60 hover:text-[#e4d4a7] transition cursor-pointer"
+          >
+            ✕ CLOSE
+          </button>
+        </div>
+      </div>
+
+      <!-- Large 12-inch Grooved Platter + Brushed Brass Tonearm -->
+      <div class="flex justify-center py-1">
+        <div class="relative w-48 h-48 sm:w-52 sm:h-52 flex items-center justify-center">
+          <div class="absolute inset-0 rounded-full border border-[#e4d4a7]/15 bg-black/50"></div>
+          <div onclick="toggleVinylPlayPause()" class="vinyl-disc js-spin-disc w-44 h-44 sm:w-48 sm:h-48 flex items-center justify-center cursor-pointer">
+            <div class="js-disc-label relative w-16 h-16 rounded-full border-2 border-[#e4d4a7]/40 overflow-hidden flex items-center justify-center z-10">
+              <span class="w-2 h-2 rounded-full bg-[#0c0d0f]"></span>
+            </div>
+          </div>
+          <svg viewBox="0 0 120 160" class="vinyl-tonearm js-tonearm absolute -top-2 -right-3 w-24 h-36 z-20 drop-shadow-[0_6px_10px_rgba(0,0,0,0.75)]">
+            <circle cx="94" cy="26" r="13" fill="#231f1b" stroke="#e4d4a7" stroke-opacity="0.65" stroke-width="1.6" />
+            <circle cx="94" cy="26" r="5" fill="#e4d4a7" />
+            <path d="M94 26 L88 102 L66 132" fill="none" stroke="#e4d4a7" stroke-width="2.8" stroke-linecap="round" />
+            <rect x="57" y="127" width="14" height="8" rx="1.5" transform="rotate(-38 64 131)" fill="#d47a9c" stroke="#f6e7d8" stroke-width="1" />
+          </svg>
+        </div>
+      </div>
+
+      <!-- Track Title, Artist & Review Quote -->
+      <div class="text-center space-y-1">
+        <h3 class="js-track-title font-serif-editorial text-2xl text-[#f3f1ec] truncate">Select a Record</h3>
+        <p id="sheet-track-artist" class="font-serif-editorial italic text-sm text-[#e4d4a7]/85 truncate">Rudy's Vinyl Archive</p>
+        <p id="sheet-track-review" class="text-xs text-white/55 pt-1 line-clamp-2"></p>
+      </div>
+
+      <!-- Progress Scrubber -->
+      <div class="space-y-1.5">
+        <input
+          id="sheet-progress-bar"
+          type="range"
+          min="0"
+          max="100"
+          step="0.2"
+          value="0"
+          oninput="seekVinylTrack(this.value)"
+          aria-label="Audio playback progress"
+          class="hairline-slider w-full"
+        />
+        <div class="flex justify-between font-mono-code text-[10px] text-white/45 tabular-nums">
+          <span id="sheet-time-cur">00:00</span>
+          <span id="sheet-time-dur">00:00</span>
+        </div>
+      </div>
+
+      <!-- Full Transport Bar -->
+      <div class="flex items-center justify-between gap-2 pt-1">
+        <button
+          type="button"
+          onclick="cycleVinylLoopMode()"
+          title="Loop Mode"
+          class="js-loop-btn relative w-9 h-9 rounded-full hover:bg-white/[0.06] flex items-center justify-center transition cursor-pointer text-[#e4d4a7]"
+        ></button>
+
+        <div class="flex items-center gap-3">
+          <button
+            type="button"
+            onclick="playAdjacentVinyl(-1)"
+            aria-label="Previous track"
+            class="w-10 h-10 rounded-full border border-white/12 hover:border-[#e4d4a7]/45 text-white/75 hover:text-[#e4d4a7] flex items-center justify-center transition cursor-pointer"
+          >
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="19 20 9 12 19 4 19 20"></polygon><line x1="5" y1="19" x2="5" y2="5"></line>
+            </svg>
+          </button>
+
+          <button
+            type="button"
+            onclick="toggleVinylPlayPause()"
+            aria-label="Play or pause"
+            class="js-play-btn w-12 h-12 rounded-full bg-[#e4d4a7] hover:bg-[#f3e6c2] text-[#0e0e11] flex items-center justify-center shadow-[0_0_24px_rgba(228,212,167,0.35)] transition cursor-pointer"
+          ></button>
+
+          <button
+            type="button"
+            onclick="playAdjacentVinyl(1)"
+            aria-label="Next track"
+            class="w-10 h-10 rounded-full border border-white/12 hover:border-[#e4d4a7]/45 text-white/75 hover:text-[#e4d4a7] flex items-center justify-center transition cursor-pointer"
+          >
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="5 4 15 12 5 20 5 4"></polygon><line x1="19" y1="5" x2="19" y2="19"></line>
+            </svg>
+          </button>
+        </div>
+
+        <div class="flex items-center gap-1.5">
+          <input
+            id="sheet-volume-bar"
+            type="range"
+            min="0"
+            max="1"
+            step="0.05"
+            value="0.85"
+            oninput="setVinylVolume(this.value)"
+            aria-label="Volume"
+            class="hairline-slider w-14"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Persistent Hidden HTML5 Audio Engine (preload="none" guarantees 0 KB audio cost until user clicks Play) -->
+  <audio id="vinyl-audio-engine" preload="none" class="hidden"></audio>
+
+  <!-- ========================================================================
+       DISCREET EDITORIAL AUTHOR LOGIN MODAL (HIDDEN FROM PUBLIC VISITORS)
+       ======================================================================== -->
+  <div
+    id="author-login-modal"
+    onclick="if (event.target === this) closeAuthorLoginModal()"
+    class="fixed inset-0 z-50 hidden items-center justify-center bg-black/75 backdrop-blur-sm px-4"
+  >
+    <div class="w-full max-w-sm rounded-2xl border border-[#e4d4a7]/35 bg-[#131518] p-6 sm:p-7 shadow-[0_24px_60px_rgba(0,0,0,0.85)] space-y-5 folio-fade-in">
+      <div class="flex items-start justify-between border-b border-white/10 pb-3.5">
+        <div>
+          <p class="font-mono-code text-[10px] tracking-[0.2em] uppercase text-[#e4d4a7]/80">
+            [ RUDY'S PRESS · PRIVATE ]
+          </p>
+          <h3 class="font-serif-editorial text-2xl text-[#f3f1ec] mt-1">
+            Author's Seal
+          </h3>
+        </div>
+        <button
+          type="button"
+          onclick="closeAuthorLoginModal()"
+          aria-label="Close login modal"
+          class="text-white/45 hover:text-[#e4d4a7] font-mono-code text-xs px-2 py-1 cursor-pointer"
+        >
+          ✕
+        </button>
+      </div>
+
+      <form onsubmit="handleAuthorLoginSubmit(event)" class="space-y-4">
+        <div class="space-y-1.5">
+          <label for="author-email-input" class="block font-mono-code text-[11px] uppercase tracking-wider text-white/50">
+            Email
+          </label>
+          <input
+            id="author-email-input"
+            type="email"
+            required
+            autocomplete="email"
+            placeholder="rudy@studyenglishwith.me"
+            class="w-full rounded-lg bg-black/45 border border-white/15 px-3.5 py-2.5 text-sm text-[#f3f1ec] placeholder-white/30 focus:outline-none focus:border-[#e4d4a7]"
+          />
+        </div>
+
+        <div class="space-y-1.5">
+          <label for="author-password-input" class="block font-mono-code text-[11px] uppercase tracking-wider text-white/50">
+            Passkey
+          </label>
+          <input
+            id="author-password-input"
+            type="password"
+            required
+            autocomplete="current-password"
+            placeholder="••••••••••••"
+            class="w-full rounded-lg bg-black/45 border border-white/15 px-3.5 py-2.5 text-sm text-[#f3f1ec] placeholder-white/30 focus:outline-none focus:border-[#e4d4a7]"
+          />
+        </div>
+
+        <p id="author-login-status" class="font-mono-code text-[11px] text-amber-300 min-h-[16px]"></p>
+
+        <button
+          id="btn-author-signin"
+          type="submit"
+          class="w-full rounded-xl bg-[#e4d4a7] hover:bg-[#efe2be] text-[#0c0d0f] font-mono-code text-xs font-medium tracking-wider uppercase py-3 transition cursor-pointer shadow-lg"
+        >
+          UNLOCK STUDIO ↵
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       WORK & STUDY — CONTEXT MENU, MOVE MODAL, BUTTERFLY SWARM & GRAPH OVERLAY
+       ======================================================================== -->
+  <div
+    id="ws-context-menu"
+    class="hidden fixed z-[92] min-w-[184px] rounded-xl border border-white/15 bg-[#191b20]/98 backdrop-blur-md p-1.5 shadow-[0_18px_46px_rgba(0,0,0,0.8)] text-xs"
+  ></div>
+
+  <div
+    id="ws-move-modal"
+    onclick="if (event.target === this) wsCloseMoveModal()"
+    class="hidden fixed inset-0 z-[93] bg-black/70 backdrop-blur-sm items-center justify-center px-4"
+  >
+    <div class="w-full max-w-sm rounded-2xl border border-[#e4d4a7]/30 bg-[#15171c] p-5 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between border-b border-white/10 pb-3">
+        <div>
+          <p class="font-mono-code text-[10px] tracking-[0.18em] uppercase text-[#e4d4a7]/80">MOVE NOTE</p>
+          <h3 id="ws-move-modal-title" class="font-serif-editorial text-xl text-[#f3f1ec] mt-0.5 truncate max-w-[260px]">Move to folder</h3>
+        </div>
+        <button type="button" onclick="wsCloseMoveModal()" class="text-white/45 hover:text-[#e4d4a7] font-mono-code text-xs px-2 py-1 cursor-pointer">✕</button>
+      </div>
+      <div id="ws-move-folder-list" class="space-y-1.5 max-h-60 overflow-y-auto pr-1"></div>
+    </div>
+  </div>
+
+  <!-- Dedicated Butterfly Swarm Layer (Notes -> Golden Butterflies -> Graph Nodes) -->
+  <div id="ws-butterfly-swarm" class="hidden"></div>
+
+  <!-- Full-Viewport Interactive Knowledge Graph View Overlay (Scoped to Work & Study) -->
+  <div id="ws-graph-overlay" class="hidden opacity-0 flex flex-col">
+    <!-- Top Graph Bar -->
+    <div class="relative z-20 flex flex-wrap items-center justify-between gap-3 px-4 sm:px-7 py-3.5 border-b border-white/10 bg-[#0d0f13]/85 backdrop-blur-md">
+      <div class="flex items-center gap-3">
+        <span class="inline-flex items-center gap-2 font-mono-code text-xs tracking-[0.16em] uppercase text-[#e4d4a7]">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <circle cx="6" cy="6" r="2.5"></circle>
+            <circle cx="18" cy="7" r="2.5"></circle>
+            <circle cx="12" cy="18" r="2.5"></circle>
+            <line x1="8.2" y1="7.1" x2="15.6" y2="7"></line>
+            <line x1="7.4" y1="8.1" x2="10.8" y2="15.8"></line>
+            <line x1="16.6" y1="9.1" x2="13.2" y2="15.8"></line>
+          </svg>
+          <span>KNOWLEDGE GRAPH</span>
+        </span>
+        <span id="ws-graph-stats" class="hidden sm:inline font-mono-code text-[11px] text-white/45"></span>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-2">
+        <button
+          id="ws-graph-link-mode-btn"
+          type="button"
+          hidden
+          onclick="wsToggleGraphLinkMode()"
+          title="Click two nodes to link them together"
+          class="hidden inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/15 bg-white/[0.04] hover:border-[#e4d4a7]/50 text-xs font-mono-code text-white/75 hover:text-[#e4d4a7] transition cursor-pointer"
+        >
+          <span>🔗</span>
+          <span>Link Notes</span>
+        </button>
+        <button
+          type="button"
+          onclick="wsGraphZoom(1.2)"
+          title="Zoom In"
+          class="w-8 h-8 rounded-full border border-white/12 bg-white/[0.04] hover:border-[#e4d4a7]/45 text-white/70 hover:text-[#e4d4a7] font-mono-code text-sm flex items-center justify-center transition cursor-pointer"
+        >+</button>
+        <button
+          type="button"
+          onclick="wsGraphZoom(0.82)"
+          title="Zoom Out"
+          class="w-8 h-8 rounded-full border border-white/12 bg-white/[0.04] hover:border-[#e4d4a7]/45 text-white/70 hover:text-[#e4d4a7] font-mono-code text-sm flex items-center justify-center transition cursor-pointer"
+        >−</button>
+        <button
+          type="button"
+          onclick="wsGraphResetView()"
+          title="Reset View"
+          class="px-2.5 h-8 rounded-full border border-white/12 bg-white/[0.04] hover:border-[#e4d4a7]/45 text-white/70 hover:text-[#e4d4a7] font-mono-code text-[11px] transition cursor-pointer"
+        >RESET</button>
+        <button
+          type="button"
+          onclick="wsCloseGraphView()"
+          class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border border-[#e4d4a7]/45 bg-[#e4d4a7]/15 hover:bg-[#e4d4a7]/25 text-xs font-mono-code text-[#e4d4a7] transition cursor-pointer"
+        >
+          <span>←</span>
+          <span>Back to Notes</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Interactive Force-Directed Graph Canvas Stage -->
+    <div id="ws-graph-stage" class="relative flex-1 overflow-hidden select-none">
+      <canvas id="ws-graph-canvas" class="w-full h-full block cursor-grab active:cursor-grabbing"></canvas>
+
+      <!-- Link Mode Banner (Admin Only) -->
+      <div
+        id="ws-graph-link-banner"
+        class="hidden absolute top-4 left-1/2 -translate-x-1/2 z-20 px-4 py-2 rounded-full border border-[#e4d4a7]/45 bg-[#15171d]/92 backdrop-blur-md font-mono-code text-xs text-[#e4d4a7] shadow-xl"
+      >
+        Link Mode: Click the first note node, then click the second node to create a [[Link]]
+      </div>
+
+      <!-- Selected Node Quick Preview Card -->
+      <div
+        id="ws-graph-node-card"
+        class="hidden absolute bottom-3 left-3 right-3 sm:bottom-5 sm:left-5 sm:right-auto sm:w-80 z-20 rounded-2xl border border-[#e4d4a7]/30 bg-[#13151b]/95 backdrop-blur-md p-4 shadow-2xl space-y-2.5"
+      >
+        <div class="flex items-start justify-between gap-2">
+          <div class="min-w-0">
+            <p id="ws-graph-card-folder" class="font-mono-code text-[10px] uppercase tracking-wider text-white/45"></p>
+            <h4 id="ws-graph-card-title" class="font-serif-editorial text-xl text-[#f3f1ec] truncate mt-0.5"></h4>
+          </div>
+          <button type="button" onclick="wsHideGraphNodeCard()" aria-label="Close preview" class="text-white/40 hover:text-white text-xs font-mono-code cursor-pointer">✕</button>
+        </div>
+        <p id="ws-graph-card-excerpt" class="text-xs text-white/65 leading-relaxed line-clamp-3"></p>
+        <div id="ws-graph-card-links" class="flex flex-wrap gap-1.5 pt-0.5"></div>
+        <div class="pt-1 flex items-center justify-between gap-2">
+          <span id="ws-graph-card-degree" class="font-mono-code text-[10px] text-white/40"></span>
+          <button
+            id="ws-graph-card-open-btn"
+            type="button"
+            class="px-3.5 py-1.5 rounded-lg bg-[#e4d4a7] hover:bg-[#f2e5bf] text-[#0c0d0f] font-mono-code text-[11px] font-medium transition cursor-pointer"
+          >Open Note ↗</button>
+        </div>
+      </div>
+
+      <!-- Bottom-Right Controls Hint -->
+      <div class="hidden sm:flex items-center gap-3 absolute bottom-4 right-5 z-10 px-3.5 py-1.5 rounded-full border border-white/10 bg-[#111318]/80 backdrop-blur-sm font-mono-code text-[10px] text-white/45">
+        <span>Drag nodes</span>
+        <span>·</span>
+        <span>Scroll to zoom</span>
+        <span>·</span>
+        <span>Double-click to open</span>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ========================================================================
+       MOMENTS & ART EXCLUSIVE BACK-TO-TOP BUTTON (CHAMPAGNE BUTTERFLY ON "R")
+       ======================================================================== -->
+  <div
+    id="back-to-top-widget"
+    class="backtop-widget hidden"
+    aria-hidden="true"
+  >
+    <!-- Editable & Deletable Speech Bubble -->
+    <div id="backtop-bubble" class="backtop-bubble">
+      <span id="backtop-bubble-text">Back to top?</span>
+      <button
+        id="backtop-bubble-edit-btn"
+        type="button"
+        hidden
+        onclick="openButterflyBubbleEditor(event, 'backtop')"
+        title="Edit or delete Back-to-Top bubble"
+        aria-label="Edit or delete Back-to-Top bubble"
+        class="hidden ml-1.5 inline-flex items-center justify-center w-4 h-4 rounded-full bg-[#e4d4a7]/20 hover:bg-[#e4d4a7]/40 text-[#e4d4a7] text-[10px] leading-none transition cursor-pointer"
+      >✎</button>
+    </div>
+
+    <!-- Main Clickable Artistic Serif "R" with Perched Champagne-Gold Butterfly -->
+    <div class="relative inline-flex items-center justify-center">
+      <button
+        id="backtop-trigger-btn"
+        type="button"
+        onclick="handleBackToTopClick()"
+        title="Back to top"
+        aria-label="Back to top"
+        class="backtop-r-btn cursor-pointer"
+      >
+        <span class="backtop-r-letter font-serif-editorial italic" aria-hidden="true">R</span>
+
+        <!-- Perched 3D Champagne-Gold Butterfly on the Upper Curve of "R" -->
+        <span class="backtop-butterfly-perch" aria-hidden="true">
+          <span class="butterfly-3d-stage block">
+            <span class="butterfly-wing-pane wing-left block">
+              <svg viewBox="0 0 50 100" class="w-full h-full overflow-visible">
+                <defs>
+                  <linearGradient id="btWingUL" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#fff8e6" stop-opacity="0.98" />
+                    <stop offset="55%" stop-color="#e4d4a7" stop-opacity="0.92" />
+                    <stop offset="100%" stop-color="#b89b5e" stop-opacity="0.95" />
+                  </linearGradient>
+                  <linearGradient id="btWingLL" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#f3e7c6" stop-opacity="0.94" />
+                    <stop offset="100%" stop-color="#9e8249" stop-opacity="0.92" />
+                  </linearGradient>
+                </defs>
+                <path d="M48.5 47 C33 17, 6 15, 10 42 C13 55, 33 56, 48.5 52 Z" fill="url(#btWingUL)" stroke="#fffdf7" stroke-width="0.9"/>
+                <path d="M48.5 52 C33 56, 16 68, 24 82 C31 91, 44 76, 48.5 58 Z" fill="url(#btWingLL)" stroke="#fffdf7" stroke-width="0.8"/>
+              </svg>
+            </span>
+            <span class="butterfly-wing-pane wing-right block">
+              <svg viewBox="50 0 50 100" class="w-full h-full overflow-visible">
+                <defs>
+                  <linearGradient id="btWingUR" x1="100%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stop-color="#fff8e6" stop-opacity="0.98" />
+                    <stop offset="55%" stop-color="#e4d4a7" stop-opacity="0.92" />
+                    <stop offset="100%" stop-color="#b89b5e" stop-opacity="0.95" />
+                  </linearGradient>
+                  <linearGradient id="btWingLR" x1="100%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stop-color="#f3e7c6" stop-opacity="0.94" />
+                    <stop offset="100%" stop-color="#9e8249" stop-opacity="0.92" />
+                  </linearGradient>
+                </defs>
+                <path d="M51.5 47 C67 17, 94 15, 90 42 C87 55, 67 56, 51.5 52 Z" fill="url(#btWingUR)" stroke="#fffdf7" stroke-width="0.9"/>
+                <path d="M51.5 52 C67 56, 84 68, 76 82 C69 91, 56 76, 51.5 58 Z" fill="url(#btWingLR)" stroke="#fffdf7" stroke-width="0.8"/>
+              </svg>
+            </span>
+            <span class="butterfly-body-pane block">
+              <svg viewBox="0 0 100 100" class="w-full h-full overflow-visible">
+                <ellipse cx="50" cy="52" rx="1.9" ry="12" fill="#3a2f1d" stroke="#e4d4a7" stroke-width="0.45" />
+                <circle cx="50" cy="39.5" r="1.7" fill="#3a2f1d" />
+                <path d="M49.2 38.5 Q44 30 40 28 M50.8 38.5 Q56 30 60 28" stroke="#e4d4a7" stroke-width="1" fill="none" stroke-linecap="round"/>
+              </svg>
+            </span>
+          </span>
+        </span>
+      </button>
+
+      <!-- Admin-only discreet re-add bubble icon (visible ONLY when Admin deleted the bubble) -->
+      <button
+        id="backtop-bubble-add-btn"
+        type="button"
+        hidden
+        onclick="openButterflyBubbleEditor(event, 'backtop')"
+        title="Add Back-to-Top bubble text"
+        aria-label="Add Back-to-Top bubble text"
+        class="backtop-admin-readd hidden"
+      >✎</button>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       ADMIN BUTTERFLY SPEECH BUBBLE EDITOR MODAL (MAIN + BACK-TO-TOP)
+       ======================================================================== -->
+  <div
+    id="butterfly-bubble-modal"
+    onclick="if (event.target === this) closeButterflyBubbleEditor()"
+    class="fixed inset-0 z-[96] hidden items-center justify-center bg-black/75 backdrop-blur-sm px-4"
+  >
+    <div class="w-full max-w-sm rounded-2xl border border-[#e4d4a7]/35 bg-[#131518] p-6 shadow-[0_24px_60px_rgba(0,0,0,0.85)] space-y-4 folio-fade-in">
+      <div class="flex items-start justify-between border-b border-white/10 pb-3">
+        <div>
+          <p id="butterfly-bubble-modal-kicker" class="font-mono-code text-[10px] tracking-[0.2em] uppercase text-[#e4d4a7]/80">
+            ✦ BUTTERFLY COMPANION
+          </p>
+          <h3 id="butterfly-bubble-modal-heading" class="font-serif-editorial text-2xl text-[#f3f1ec] mt-1">
+            Edit Speech Bubble
+          </h3>
+        </div>
+        <button
+          type="button"
+          onclick="closeButterflyBubbleEditor()"
+          aria-label="Close speech bubble editor"
+          class="text-white/45 hover:text-[#e4d4a7] font-mono-code text-xs px-2 py-1 cursor-pointer"
+        >
+          ✕
+        </button>
+      </div>
+
+      <form onsubmit="handleButterflyBubbleModalSubmit(event)" class="space-y-3.5">
+        <div class="space-y-1.5">
+          <label for="butterfly-bubble-modal-input" class="block font-mono-code text-[11px] uppercase tracking-wider text-white/50">
+            Bubble Text
+          </label>
+          <input
+            id="butterfly-bubble-modal-input"
+            type="text"
+            maxlength="80"
+            placeholder="Close this page?"
+            class="w-full rounded-lg bg-black/45 border border-white/15 px-3.5 py-2.5 text-sm text-[#f3f1ec] placeholder-white/30 focus:outline-none focus:border-[#e4d4a7]"
+          />
+        </div>
+
+        <p id="butterfly-bubble-modal-status" class="font-mono-code text-[11px] text-[#e4d4a7] min-h-[16px]"></p>
+
+        <div class="flex items-center gap-2">
+          <button
+            id="btn-delete-butterfly-bubble"
+            type="button"
+            hidden
+            onclick="handleDeleteBackTopBubbleFromModal()"
+            class="hidden px-3.5 py-2.5 rounded-xl border border-rose-400/35 bg-rose-500/15 hover:bg-rose-500/25 text-rose-300 font-mono-code text-xs tracking-wider uppercase transition cursor-pointer shrink-0"
+          >
+            DELETE
+          </button>
+          <button
+            id="btn-save-butterfly-bubble"
+            type="submit"
+            class="flex-1 rounded-xl bg-[#e4d4a7] hover:bg-[#efe2be] text-[#0c0d0f] font-mono-code text-xs font-medium tracking-wider uppercase py-2.5 transition cursor-pointer shadow-lg"
+          >
+            SAVE BUBBLE ↵
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       STARRY FRIEND LIST SKY OVERLAY & BUTTERFLY-WRAP ASCENT TRANSITION
+       ======================================================================== -->
+  <div id="friends-transition-layer" class="hidden" aria-hidden="true"></div>
+
+  <div
+    id="friends-sky-overlay"
+    onclick="dismissMobileFriendTooltip(event)"
+    class="hidden opacity-0 fixed inset-0 z-[72] flex flex-col overflow-hidden"
+  >
+    <!-- Top Night-Sky Header Bar -->
+    <div class="relative z-30 flex items-center justify-between gap-3 px-4 sm:px-7 py-3.5 border-b border-white/10 bg-[#080a10]/80 backdrop-blur-md shrink-0">
+      <div class="flex items-center gap-3 min-w-0">
+        <span class="font-mono-code text-xs tracking-[0.18em] uppercase text-[#e4d4a7] shrink-0">
+          ✦ FRIEND LIST
+        </span>
+        <span id="friends-sky-subtitle" class="hidden sm:inline font-mono-code text-[10px] tracking-wider uppercase text-white/45 truncate">
+          HOVER ANY STAR TO SEE THEIR NICKNAME
+        </span>
+      </div>
+
+      <div class="flex items-center gap-2 shrink-0">
+        <button
+          id="btn-friends-add"
+          type="button"
+          hidden
+          onclick="openFriendDetailModal('__new__')"
+          class="hidden inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#e4d4a7]/45 bg-[#e4d4a7]/15 hover:bg-[#e4d4a7]/25 font-mono-code text-[11px] text-[#e4d4a7] transition cursor-pointer"
+        >
+          <span>+</span>
+          <span>Add Friend</span>
+        </button>
+        <button
+          type="button"
+          onclick="closeFriendsSky()"
+          class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border border-white/15 bg-white/[0.05] hover:border-[#e4d4a7]/45 font-mono-code text-xs text-white/80 hover:text-[#e4d4a7] transition cursor-pointer"
+        >
+          <span>←</span>
+          <span>Profile</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Starry Constellation Stage (Rudy at Center, Friends 30% Smaller Around Him) -->
+    <div id="friends-sky-stage" class="relative flex-1 min-h-0 overflow-hidden select-none"></div>
+  </div>
+
+  <!-- Admin-Only Friend Detail & Edit Modal (Strictly Invisible to Visitors) -->
+  <div
+    id="friend-detail-modal"
+    onclick="if (event.target === this) closeFriendDetailModal()"
+    class="fixed inset-0 z-[97] hidden items-center justify-center bg-black/78 backdrop-blur-sm px-4"
+  >
+    <div
+      id="friend-detail-panel"
+      class="w-full max-w-md rounded-2xl border border-[#e4d4a7]/35 bg-[#13151a] p-6 shadow-[0_24px_65px_rgba(0,0,0,0.88)] space-y-4 folio-fade-in"
+    ></div>
+  </div>
+
+  <!-- ========================================================================
+       GLOBAL IMAGE LIGHTBOX MODAL (MOMENTS & WORK & STUDY)
+       ======================================================================== -->
+  <div
+    id="image-lightbox-modal"
+    onclick="if (event.target === this) closeImageLightbox()"
+    class="sheet-backdrop hidden opacity-0 fixed inset-0 z-[98] bg-black/88 backdrop-blur-md flex flex-col items-center justify-center p-4 sm:p-8"
+  >
+    <div class="w-full max-w-5xl flex items-center justify-between gap-3 pb-3">
+      <span id="image-lightbox-caption" class="font-mono-code text-xs text-[#e4d4a7]/85 truncate"></span>
+      <div class="flex items-center gap-2 shrink-0">
+        <a
+          id="image-lightbox-original"
+          href="#"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="px-3 py-1.5 rounded-full border border-white/15 bg-white/[0.06] hover:border-[#e4d4a7]/45 font-mono-code text-[11px] text-white/75 hover:text-[#e4d4a7] transition"
+        >Original ↗</a>
+        <button
+          type="button"
+          onclick="closeImageLightbox()"
+          aria-label="Close image preview"
+          class="px-3 py-1.5 rounded-full border border-[#e4d4a7]/40 bg-[#1a1916] hover:bg-[#e4d4a7]/20 font-mono-code text-xs text-[#e4d4a7] transition cursor-pointer"
+        >✕ CLOSE</button>
+      </div>
+    </div>
+    <div class="flex-1 min-h-0 flex items-center justify-center w-full" onclick="if (event.target === this) closeImageLightbox()">
+      <img
+        id="image-lightbox-img"
+        alt="Full resolution preview"
+        class="max-w-full max-h-[82vh] rounded-xl border border-white/15 shadow-2xl object-contain"
+      />
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       BUTTERFLY GLOBAL SEARCH MODAL (⌘K / CTRL+K)
+       ======================================================================== -->
+  <div
+    id="global-search-modal"
+    onclick="if (event.target === this) closeGlobalSearchModal()"
+    class="sheet-backdrop hidden opacity-0 fixed inset-0 z-[99] bg-black/78 backdrop-blur-md flex items-start justify-center pt-16 sm:pt-24 px-4"
+  >
+    <div class="w-full max-w-xl rounded-2xl border border-[#e4d4a7]/35 bg-[#13151a]/98 shadow-[0_24px_70px_rgba(0,0,0,0.9)] overflow-hidden folio-fade-in">
+      <div class="flex items-center gap-3 px-4 py-3.5 border-b border-white/10">
+        <svg class="w-5 h-5 shrink-0" viewBox="0 0 64 64" aria-hidden="true">
+          <path d="M32 30 C22 12, 6 11, 9 28 C11 36, 22 37, 32 34 Z" fill="#e4d4a7"/>
+          <path d="M32 30 C42 12, 58 11, 55 28 C53 36, 42 37, 32 34 Z" fill="#e4d4a7"/>
+          <path d="M32 34 C22 37, 12 44, 17 52 C21 57, 29 48, 32 38 Z" fill="#b89b5e"/>
+          <path d="M32 34 C42 37, 52 44, 47 52 C43 57, 35 48, 32 38 Z" fill="#b89b5e"/>
+        </svg>
+        <input
+          id="global-search-input"
+          type="text"
+          oninput="handleGlobalSearchInput(this.value)"
+          placeholder="Search Work & Study notes, Moments, and Vinyl tracks..."
+          class="flex-1 min-w-0 bg-transparent text-sm text-[#f3f1ec] placeholder-white/35 focus:outline-none"
+        />
+        <button
+          type="button"
+          onclick="closeGlobalSearchModal()"
+          class="font-mono-code text-[10px] text-white/45 hover:text-[#e4d4a7] px-2 py-1 rounded border border-white/10 cursor-pointer"
+        >ESC</button>
+      </div>
+      <div id="global-search-results" class="max-h-[58vh] overflow-y-auto p-2.5 space-y-1.5">
+        <p class="px-3 py-6 text-center font-mono-code text-xs text-white/40">
+          Type a keyword to search across Rudy's Press...
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       MODULAR APPLICATION SCRIPTS (LOAD ORDER PRESERVES SHARED STATE & AUDIO)
+       ======================================================================== -->
+  <script src="./js/core.js?v=20261127"></script>
+  <script src="./js/profile.js?v=20261127"></script>
+  <script src="./js/friends.js?v=20261127"></script>
+  <script src="./js/moment.js?v=20261127"></script>
+  <script src="./js/art.js?v=20261127"></script>
+  <script src="./js/work.js?v=20261127"></script>
+  <script src="./js/app.js?v=20261127"></script>
+</body>
+</html>
